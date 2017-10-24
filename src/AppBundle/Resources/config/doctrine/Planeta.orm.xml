@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Planeta" table="planeta">
+    <unique-constraints>
+      <unique-constraint name="UQ_planeta_nom" columns="nom"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="nom" type="string" column="nom" length="20" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="distancia" type="float" column="distancia" precision="10" scale="0" nullable="false"/>
+    <field name="periode" type="float" column="periode" precision="10" scale="0" nullable="false"/>
+    <field name="diametre" type="float" column="diametre" precision="10" scale="0" nullable="false"/>
+    <field name="situacio" type="string" column="situacio" length="1" nullable="false">
+      <options>
+        <option name="fixed">1</option>
+        <option name="default">E</option>
+      </options>
+    </field>
+    <field name="tipus" type="string" column="tipus" length="1" nullable="false">
+      <options>
+        <option name="fixed">1</option>
+        <option name="default">P</option>
+      </options>
+    </field>
+    <field name="superficie" type="float" column="superficie" precision="10" scale="0" nullable="true"/>
+  </entity>
+</doctrine-mapping>

@@ -1,0 +1,53 @@
+{% extends 'layout.html.twig' %}
+
+{% block titulo %}Lista de planetas{% endblock %}
+
+{% block body %}
+    <h1>Planetas list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Distancia</th>
+                <th>Periode</th>
+                <th>Diametre</th>
+                <th>Situacio</th>
+                <th>Tipus</th>
+                <th>Superficie</th>
+                <th>Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for planetum in planetas %}
+            <tr>
+                <td><a href="{{ path('planeta_show', { 'id': planetum.id }) }}">{{ planetum.nom }}</a></td>
+                <td>{{ planetum.distancia }}</td>
+                <td>{{ planetum.periode }}</td>
+                <td>{{ planetum.diametre }}</td>
+                <td>{{ planetum.situacio }}</td>
+                <td>{{ planetum.tipus }}</td>
+                <td>{{ planetum.superficie }}</td>
+                <td>{{ planetum.id }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('planeta_show', { 'id': planetum.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('planeta_edit', { 'id': planetum.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('planeta_new') }}">Create a new planetum</a>
+        </li>
+    </ul>
+{% endblock %}

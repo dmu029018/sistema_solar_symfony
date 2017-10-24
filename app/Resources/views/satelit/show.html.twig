@@ -1,0 +1,39 @@
+{% extends 'layout.html.twig' %}
+
+
+
+{% block titulo %}Ver satélite{% endblock %}
+
+
+
+
+{% block body %}
+    <h1>Satelit</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Nom</th>
+                <td>{{ satelit.nom }}</td>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <td>{{ satelit.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('satelit_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('satelit_edit', { 'id': satelit.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

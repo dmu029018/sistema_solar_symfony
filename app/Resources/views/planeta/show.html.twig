@@ -1,0 +1,61 @@
+{% extends 'layout.html.twig' %}
+
+
+
+{% block titulo %}Ver planeta{% endblock %}
+
+
+{% block body %}
+    <h1>Planetum</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Nom</th>
+                <td>{{ planetum.nom }}</td>
+            </tr>
+            <tr>
+                <th>Distancia</th>
+                <td>{{ planetum.distancia }}</td>
+            </tr>
+            <tr>
+                <th>Periode</th>
+                <td>{{ planetum.periode }}</td>
+            </tr>
+            <tr>
+                <th>Diametre</th>
+                <td>{{ planetum.diametre }}</td>
+            </tr>
+            <tr>
+                <th>Situacio</th>
+                <td>{{ planetum.situacio }}</td>
+            </tr>
+            <tr>
+                <th>Tipus</th>
+                <td>{{ planetum.tipus }}</td>
+            </tr>
+            <tr>
+                <th>Superficie</th>
+                <td>{{ planetum.superficie }}</td>
+            </tr>
+            <tr>
+                <th>Id</th>
+                <td>{{ planetum.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('planeta_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('planeta_edit', { 'id': planetum.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}
