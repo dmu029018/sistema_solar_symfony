@@ -2,13 +2,16 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Satelit;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
 
 /**
  * Planeta
  *
  * @ORM\Table(name="planeta", uniqueConstraints={@ORM\UniqueConstraint(name="UQ_planeta_nom", columns={"nom"})})
- * @ORM\Entity(repositoryClass="AppBundle\Repository\SatelitRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\PlanetaRepository")
  */
 class Planeta
 {
@@ -70,61 +73,78 @@ class Planeta
      */
     private $id;
 
+    /**
+     * @var array
+     * 
+     * @ORM\OneToMany(targetEntity="Satelit", mappedBy="Planeta")
+     */
+    protected $satelits;
+    
+    public function __construct()
+    {
+        $this->satelits = new ArrayCollection();
+    }
+    
 
-    function getNom() {
+    public function getNom() {
         return $this->nom;
     }
 
-    function getDistancia() {
+    public function getDistancia() {
         return $this->distancia;
     }
 
-    function getPeriode() {
+    public function getPeriode() {
         return $this->periode;
     }
 
-    function getDiametre() {
+    public function getDiametre() {
         return $this->diametre;
     }
 
-    function getSituacio() {
+    public function getSituacio() {
         return $this->situacio;
     }
 
-    function getTipus() {
+    public function getTipus() {
         return $this->tipus;
     }
 
-    function getSuperficie() {
+    public function getSuperficie() {
         return $this->superficie;
     }
 
-    function getId() {
+    public function getId() {
         return $this->id;
     }
 
-    function setNom($nom) {
+    public function setNom($nom) {
         $this->nom = $nom;
     }
 
-    function setDistancia($distancia) {
+    public function setDistancia($distancia) {
         $this->distancia = $distancia;
     }
 
-    function setPeriode($periode) {
+    public function setPeriode($periode) {
         $this->periode = $periode;
     }
 
-    function setDiametre($diametre) {
+    public function setDiametre($diametre) {
         $this->diametre = $diametre;
     }
 
-    function setSituacio($situacio) {
+    public function setSituacio($situacio) {
         $this->situacio = $situacio;
     }
 
-    function setTipus($tipus) {
+    public function setTipus($tipus) {
         $this->tipus = $tipus;
+    }
+    
+    public function getSatelits()
+    {
+        
     }
     
 }

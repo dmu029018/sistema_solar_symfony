@@ -47,7 +47,7 @@ class Satelit
         return $this->id;
     }
 
-    function getIdPlaneta(): \AppBundle\Entity\Planeta {
+    function getIdPlaneta(){
         return $this->idPlaneta;
     }
 
@@ -59,7 +59,7 @@ class Satelit
         $this->id = $id;
     }
 
-    function setIdPlaneta(\AppBundle\Entity\Planeta $idPlaneta) {
+    function setIdPlaneta($idPlaneta) {
         $this->idPlaneta = $idPlaneta;
     }
 

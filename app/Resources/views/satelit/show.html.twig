@@ -2,38 +2,28 @@
 
 
 
-{% block titulo %}Ver satélite{% endblock %}
+{% block title %}Satèl·lit: {{ satelit.nom }}{% endblock %}
 
 
 
 
 {% block body %}
-    <h1>Satelit</h1>
+    <div class="well">
+        <h1 class="page-header text-center">Satelit #{{ satelit.id }}: {{satelit.nom}}</h1>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Nom</th>
-                <td>{{ satelit.nom }}</td>
-            </tr>
-            <tr>
-                <th>Id</th>
-                <td>{{ satelit.id }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('satelit_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('satelit_edit', { 'id': satelit.id }) }}">Edit</a>
-        </li>
-        <li>
+        <p class="text-center">El satèl·lit {{ satelit.nom }} pertany al planeta <a href="{{ path('planeta_show', {'id': satelit.idPlaneta.id}) }}">{{satelit.idPlaneta.nom}}</a>.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <a class="btn btn-block btn-info" href="{{ path('satelit_index') }}">Tornar a la llista</a>
+        </div>
+        <div class="col-md-4">
+            <a class="btn btn-block btn-warning" href="{{ path('satelit_edit', { 'id': satelit.id }) }}">Editar</a>
+        </div>
+        <div class="col-md-4">
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+                <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+        </div>
+    </div>
 {% endblock %}

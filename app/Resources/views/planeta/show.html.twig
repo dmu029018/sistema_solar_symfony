@@ -2,60 +2,49 @@
 
 
 
-{% block titulo %}Ver planeta{% endblock %}
+{% block title %}Planeta: {{ planeta.nom }}{% endblock %}
 
 
 {% block body %}
-    <h1>Planetum</h1>
+    <div class="row">
+        <div class="well">
+            <h1 class="text-center page-header">Planeta #{{planeta.id}}: {{planeta.nom}}</h1>
 
-    <table>
-        <tbody>
-            <tr>
-                <th>Nom</th>
-                <td>{{ planetum.nom }}</td>
-            </tr>
-            <tr>
-                <th>Distancia</th>
-                <td>{{ planetum.distancia }}</td>
-            </tr>
-            <tr>
-                <th>Periode</th>
-                <td>{{ planetum.periode }}</td>
-            </tr>
-            <tr>
-                <th>Diametre</th>
-                <td>{{ planetum.diametre }}</td>
-            </tr>
-            <tr>
-                <th>Situacio</th>
-                <td>{{ planetum.situacio }}</td>
-            </tr>
-            <tr>
-                <th>Tipus</th>
-                <td>{{ planetum.tipus }}</td>
-            </tr>
-            <tr>
-                <th>Superficie</th>
-                <td>{{ planetum.superficie }}</td>
-            </tr>
-            <tr>
-                <th>Id</th>
-                <td>{{ planetum.id }}</td>
-            </tr>
-        </tbody>
-    </table>
+            <dl class="dl-horizontal text-center">
+                <dt>Distància</dt>
+                <dd>{{ planeta.distancia }}</dd>
+                <dt>Període</dt>
+                <dd>{{ planeta.periode }}</dd>
+                <dt>Diàmetre</dt>
+                <dd>{{ planeta.diametre }}</dd>
+                <dt>Situació</dt>
+                <dd>{{ planeta.situacio }}</dd>
+                <dt>Tipus</dt>
+                <dd>{{ planeta.tipus }}</dd>
+                <dt>Superfície</dt>
+                <dd>{{ planeta.superficie }}</dd>
+                <dt>Satèl·lits</dt>
+                {% for satelit in satelits %}
+                    <dd><a href="{{ path('satelit_show', {'id': satelit.id}) }}">{{ satelit.nom }}</dd>
+                {% else %}
+                    <dd>Aquest planeta no té cap satèl·lit associat</dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
 
-    <ul>
-        <li>
-            <a href="{{ path('planeta_index') }}">Back to the list</a>
-        </li>
-        <li>
-            <a href="{{ path('planeta_edit', { 'id': planetum.id }) }}">Edit</a>
-        </li>
-        <li>
+    <div class="row">
+        <div class="col-md-4">
+            <a class="btn btn-block btn-info" href="{{ path('planeta_index') }}">Tornar a la llista</a>
+        </div>
+        <div class="col-md-4">
+            <a class="btn btn-block btn-warning" href="{{ path('planeta_edit', { 'id': planeta.id }) }}">Editar</a>
+        </div>
+        <div class="col-md-4">
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+            <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+        </div>
+    </div>
+
 {% endblock %}

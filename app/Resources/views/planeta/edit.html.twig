@@ -1,25 +1,31 @@
 {% extends 'layout.html.twig' %}
 
 
-{% block titulo %}Editar planeta{% endblock %}
+{% block title %}Editar planeta: {{ planeta.nom }}{% endblock %}
 
 
 {% block body %}
-    <h1>Planetum edit</h1>
+    <div class="well">
+        <h1 class="page-header text-center">Editar planeta: {{ planeta.nom }}</h1>
 
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
-    {{ form_end(edit_form) }}
+        {{ form_start(edit_form) }}
+        <div class="form-group">
+            {{ form_widget(edit_form) }}
+        </div>
+        <div class="form-group">
+            <input class="btn btn-warning" type="submit" value="Editar" />
+        </div>
+        {{ form_end(edit_form) }}
+    </div>
 
-    <ul>
-        <li>
-            <a href="{{ path('planeta_index') }}">Back to the list</a>
-        </li>
-        <li>
+    <div class="row">
+        <div class="col-md-6">
+            <a class="btn btn-block btn-info" href="{{ path('planeta_index') }}">Tornar a la llista</a>
+        </div>
+        <div class="col-md-6">
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+            <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+        </div>
+    </div>
 {% endblock %}

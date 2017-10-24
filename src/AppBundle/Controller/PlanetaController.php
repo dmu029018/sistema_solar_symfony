@@ -39,20 +39,24 @@ class PlanetaController extends Controller
      */
     public function newAction(Request $request)
     {
-        $planetum = new Planeta();
-        $form = $this->createForm('AppBundle\Form\PlanetaType', $planetum);
+        $planeta = new Planeta();
+        $form = $this->createForm('AppBundle\Form\PlanetaType', $planeta);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($planetum);
+            $em->persist($planeta);
             $em->flush();
 
-            return $this->redirectToRoute('planeta_show', array('id' => $planetum->getId()));
+            return $this->redirectToRoute('planeta_show', [
+                'id' => $planeta->getId(),
+                'notification' => "Nou planeta inserit: $planeta->nom",
+            ]);
         }
 
         return $this->render('planeta/new.html.twig', array(
-            'planetum' => $planetum,
+            'planeta' => $planeta,
             'form' => $form->createView(),
         ));
     }
@@ -63,14 +67,19 @@ class PlanetaController extends Controller
      * @Route("/{id}", name="planeta_show")
      * @Method("GET")
      */
-    public function showAction(Planeta $planetum)
+    public function showAction(Planeta $planeta)
     {
-        $deleteForm = $this->createDeleteForm($planetum);
+        $deleteForm = $this->createDeleteForm($planeta);
 
-        return $this->render('planeta/show.html.twig', array(
-            'planetum' => $planetum,
+        $satelits = $this->getDoctrine()
+                ->getRepository('AppBundle:Satelit')
+                ->findByIdPlaneta($planeta->getId());
+        
+        return $this->render('planeta/show.html.twig', [
+            'planeta' => $planeta,
+            'satelits' => $satelits,
             'delete_form' => $deleteForm->createView(),
-        ));
+        ]);
     }
 
     /**
@@ -92,7 +101,7 @@ class PlanetaController extends Controller
         }
 
         return $this->render('planeta/edit.html.twig', array(
-            'planetum' => $planetum,
+            'planeta' => $planetum,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));

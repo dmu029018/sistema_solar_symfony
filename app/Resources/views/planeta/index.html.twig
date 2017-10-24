@@ -1,27 +1,28 @@
 {% extends 'layout.html.twig' %}
 
-{% block titulo %}Lista de planetas{% endblock %}
+{% block title %}Lista de planetas{% endblock %}
 
 {% block body %}
-    <h1>Planetas list</h1>
+    <h1 class="page-header text-center">Llista de Planetes</h1>
 
-    <table>
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Nom</th>
-                <th>Distancia</th>
-                <th>Periode</th>
-                <th>Diametre</th>
-                <th>Situacio</th>
-                <th>Tipus</th>
-                <th>Superficie</th>
                 <th>Id</th>
-                <th>Actions</th>
+                <th>Nom</th>
+                <th>Distància</th>
+                <th>Període</th>
+                <th>Diàmetre</th>
+                <th>Situació</th>
+                <th>Tipus</th>
+                <th>Superfície</th>
+                <th>Accions</th>
             </tr>
         </thead>
         <tbody>
         {% for planetum in planetas %}
             <tr>
+                <td>{{ planetum.id }}</td>
                 <td><a href="{{ path('planeta_show', { 'id': planetum.id }) }}">{{ planetum.nom }}</a></td>
                 <td>{{ planetum.distancia }}</td>
                 <td>{{ planetum.periode }}</td>
@@ -29,14 +30,13 @@
                 <td>{{ planetum.situacio }}</td>
                 <td>{{ planetum.tipus }}</td>
                 <td>{{ planetum.superficie }}</td>
-                <td>{{ planetum.id }}</td>
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('planeta_show', { 'id': planetum.id }) }}">show</a>
+                            <a href="{{ path('planeta_show', { 'id': planetum.id }) }}">Mostrar</a>
                         </li>
                         <li>
-                            <a href="{{ path('planeta_edit', { 'id': planetum.id }) }}">edit</a>
+                            <a href="{{ path('planeta_edit', { 'id': planetum.id }) }}">Editar</a>
                         </li>
                     </ul>
                 </td>
@@ -45,9 +45,7 @@
         </tbody>
     </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('planeta_new') }}">Create a new planetum</a>
-        </li>
-    </ul>
+    <div class="button-group">
+        <a class="btn btn-success" href="{{ path('planeta_new') }}">Crea un nou planeta</a>
+    </div>
 {% endblock %}

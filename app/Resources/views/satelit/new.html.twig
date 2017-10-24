@@ -2,20 +2,18 @@
 
 
 
-{% block titulo %}Nuevo satélite{% endblock %}
+{% block title %}Nuevo satélite{% endblock %}
 
 
 {% block body %}
-    <h1>Satelit creation</h1>
+    <h1>Crea un nou satèl·lit</h1>
 
     {{ form_start(form) }}
         {{ form_widget(form) }}
         <input type="submit" value="Create" />
     {{ form_end(form) }}
 
-    <ul>
-        <li>
-            <a href="{{ path('satelit_index') }}">Back to the list</a>
-        </li>
-    </ul>
+    <div class="btn-group">
+        <a class="btn btn-info" href="{{ path('satelit_index') }}">Back to the list</a>
+    </div>
 {% endblock %}

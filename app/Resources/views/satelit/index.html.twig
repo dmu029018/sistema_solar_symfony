@@ -1,33 +1,32 @@
 {% extends 'layout.html.twig' %}
 
-
-
-{% block titulo %}Lista de satélites{% endblock %}
-
+{% block title %}Llista de satèl·lits{% endblock %}
 
 {% block body %}
-    <h1>Satelits list</h1>
+    <h1 class="text-center page-header">Llista de satèl·lits</h1>
 
-    <table>
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Nom</th>
                 <th>Id</th>
-                <th>Actions</th>
+                <th>Nom</th>
+                <th>Planeta</th>
+                <th>Accions</th>
             </tr>
         </thead>
         <tbody>
         {% for satelit in satelits %}
             <tr>
-                <td><a href="{{ path('satelit_show', { 'id': satelit.id }) }}">{{ satelit.nom }}</a></td>
                 <td>{{ satelit.id }}</td>
+                <td><a href="{{ path('satelit_show', { 'id': satelit.id }) }}">{{ satelit.nom }}</a></td>
+                <td><a href="{{ path('planeta_show', { 'id': satelit.idPlaneta.id }) }}">{{ satelit.idPlaneta.nom }}</a></td>
                 <td>
                     <ul>
                         <li>
-                            <a href="{{ path('satelit_show', { 'id': satelit.id }) }}">show</a>
+                            <a href="{{ path('satelit_show', { 'id': satelit.id }) }}">Mostrar</a>
                         </li>
                         <li>
-                            <a href="{{ path('satelit_edit', { 'id': satelit.id }) }}">edit</a>
+                            <a href="{{ path('satelit_edit', { 'id': satelit.id }) }}">Editar</a>
                         </li>
                     </ul>
                 </td>
@@ -36,9 +35,7 @@
         </tbody>
     </table>
 
-    <ul>
-        <li>
-            <a href="{{ path('satelit_new') }}">Create a new satelit</a>
-        </li>
-    </ul>
+    <div class="button-group">
+        <a class="btn btn-success" href="{{ path('satelit_new') }}">Crea un nou satèl·lit</a>
+    </div>
 {% endblock %}

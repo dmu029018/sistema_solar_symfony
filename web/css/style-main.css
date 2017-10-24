@@ -2,28 +2,34 @@
 
 body
 {
+    font-size: 18px;
     font-family: 'Quicksand', sans-serif;
 }
 
-td, th {
-    border: 1px solid #777;
-    padding: 0.5em;
+dl *
+{
+    line-height: 1.75em;
 }
 
 
-td>ul
+td, th {
+    border: 1px solid #aaa;
+    padding: 0.5em;
+}
+
+td ul
 {
     padding: 0;
     margin: 0;
     list-style: none;
 }
 
-td>ul>li
+td ul li
 {
     display: inline;
 }
 
-td > ul > li > a
+label + .form-control 
 {
-    
+    margin-bottom: 0.5em;
 }
