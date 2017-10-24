@@ -13,7 +13,13 @@ class PlanetaType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('nom')->add('distancia')->add('periode')->add('diametre')->add('situacio')->add('tipus')->add('superficie');
+        $builder->add('nom')
+                ->add('distancia')
+                ->add('periode')
+                ->add('diametre')
+                ->add('situacio')
+                ->add('tipus')
+                ->add('superficie');
     }
     
     /**

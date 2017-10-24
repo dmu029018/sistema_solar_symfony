@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Planetum controller.
+ * Planeta controller.
  *
  * @Route("planeta")
  */
@@ -39,7 +39,7 @@ class PlanetaController extends Controller
      */
     public function newAction(Request $request)
     {
-        $planetum = new Planetum();
+        $planetum = new Planeta();
         $form = $this->createForm('AppBundle\Form\PlanetaType', $planetum);
         $form->handleRequest($request);
 
