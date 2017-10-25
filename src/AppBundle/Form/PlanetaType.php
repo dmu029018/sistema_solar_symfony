@@ -71,12 +71,7 @@ class PlanetaType extends AbstractType {
                         'min' => 1,
                         'max' => 1
                     ])
-                ])
-                ->add('superficie', NumberType::class, [
-                    'attr' => [
-                        'class' => 'form-control'
-                    ],
-        ]);
+                ]);
     }
 
     /**

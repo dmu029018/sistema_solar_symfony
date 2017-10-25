@@ -10,7 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
 /**
  * Planeta controller.
  *
- * @Route("planeta")
+ * @Route("/planeta")
  */
 class PlanetaController extends Controller
 {
@@ -20,15 +20,19 @@ class PlanetaController extends Controller
      * @Route("/", name="planeta_index")
      * @Method("GET")
      */
-    public function indexAction()
+    public function indexAction($notification = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $planetas = $em->getRepository('AppBundle:Planeta')->findAll();
-
-        return $this->render('planeta/index.html.twig', array(
-            'planetas' => $planetas,
-        ));
+        $params = [
+            'page_title' => "Llista de planetes",
+            'planetas' => $this->getDoctrine()->getRepository('AppBundle:Planeta')->findAll(),
+        ];
+        
+        if($notification)
+        {
+            $params['notification'] = $notification;
+        }
+        
+        return $this->render('planeta/index.html.twig', $params);
     }
 
     /**
@@ -51,7 +55,7 @@ class PlanetaController extends Controller
 
             return $this->redirectToRoute('planeta_show', [
                 'id' => $planeta->getId(),
-                'notification' => "Nou planeta inserit: $planeta->nom",
+                'notification' => "Nou planeta inserit: {$planeta->getNom()}",
             ]);
         }
 
@@ -63,25 +67,67 @@ class PlanetaController extends Controller
 
     /**
      * Finds and displays a planetum entity.
+     * 
+     * CURIOSIDAD: Si le pasas un objeto como argumento a la acción(planeta),
+     * pero le pasas al slug un argumento que sea una propiedad de dicho objeto, 
+     * buscará el objeto que coincida. Para acciones de este tipo se aconseja que
+     * se utilicen propiedades únicas. Esto nos permite buscar por nombre o por
+     * id usando la misma ruta.
      *
-     * @Route("/{id}", name="planeta_show")
-     * @Method("GET")
+     * @Route("/{id}", name="planeta_show", requirements={"id": "^\d+"})
+     * @Route("/{nom}", name="planeta_show_by_name")
+     * @Method({"GET", "POST"})
      */
-    public function showAction(Planeta $planeta)
+    public function showAction(Planeta $planeta, $notification = null)
     {
         $deleteForm = $this->createDeleteForm($planeta);
 
-        $satelits = $this->getDoctrine()
-                ->getRepository('AppBundle:Satelit')
-                ->findByIdPlaneta($planeta->getId());
+        $satelits = $this->getDoctrine()->getRepository('AppBundle:Planeta')->getAllSatelits($planeta->getId());
         
-        return $this->render('planeta/show.html.twig', [
+        
+        $params = [
             'planeta' => $planeta,
             'satelits' => $satelits,
             'delete_form' => $deleteForm->createView(),
-        ]);
+        ];
+        
+        if($notification)
+        {
+            $params['notification'] = $notification;
+        }
+        
+        return $this->render('planeta/show.html.twig', $params);
     }
 
+    /**
+     * @Route("/filter/{filter}/{val}", name="planeta_show_filter")
+     */
+    public function showWithFilterAction($filter, $val)
+    {
+        $planetes = [];
+        $filter_name = "Planetes";
+        
+        switch($filter)
+        {
+            case "distancia_min":
+                $planetes = $this->getDoctrine()->getRepository("AppBundle:Planeta")->selectByDistanciaMin($val);
+                $filter_name = "Planetes amb una distància mínima de {$val}UA";
+                break;
+            case "distancia_max":
+                $planetes = $this->getDoctrine()->getRepository("AppBundle:Planeta")->selectByDistanciaMax($val);
+                $filter_name = "Planetes amb una distància màxima de {$val}UA";
+                break;
+        }
+        
+        return $this->render('planeta/index.html.twig', [
+            'page_title' => $filter_name,
+            'planetas' => $planetes,
+        ]);
+        
+        
+    }
+
+    
     /**
      * Displays a form to edit an existing planetum entity.
      *
@@ -97,7 +143,9 @@ class PlanetaController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('planeta_edit', array('id' => $planetum->getId()));
+            return $this->redirectToRoute('planeta_edit', [
+                'id' => $planetum->getId()
+            ]);
         }
 
         return $this->render('planeta/edit.html.twig', array(

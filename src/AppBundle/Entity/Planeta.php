@@ -76,7 +76,7 @@ class Planeta
     /**
      * @var array
      * 
-     * @ORM\OneToMany(targetEntity="Satelit", mappedBy="Planeta")
+     * @ORM\OneToMany(targetEntity="Satelit", mappedBy="idPlaneta")
      */
     protected $satelits;
     
@@ -84,7 +84,10 @@ class Planeta
     {
         $this->satelits = new ArrayCollection();
     }
-    
+
+    public function getId() {
+        return $this->id;
+    }
 
     public function getNom() {
         return $this->nom;
@@ -114,10 +117,11 @@ class Planeta
         return $this->superficie;
     }
 
-    public function getId() {
-        return $this->id;
+    public function getSatelits()
+    {
+        return $this->satelits;
     }
-
+    
     public function setNom($nom) {
         $this->nom = $nom;
     }
@@ -140,11 +144,6 @@ class Planeta
 
     public function setTipus($tipus) {
         $this->tipus = $tipus;
-    }
-    
-    public function getSatelits()
-    {
-        
     }
     
 }

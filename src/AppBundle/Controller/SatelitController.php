@@ -40,15 +40,19 @@ class SatelitController extends Controller
     public function newAction(Request $request)
     {
         $satelit = new Satelit();
+        $em = $this->getDoctrine()->getManager();
+        
         $form = $this->createForm('AppBundle\Form\SatelitType', $satelit);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
             $em->persist($satelit);
             $em->flush();
 
-            return $this->redirectToRoute('satelit_show', array('id' => $satelit->getId()));
+            return $this->redirectToRoute('satelit_show', [
+                'id' => $satelit->getId(),
+                'notification' => "Satèl·lit afegit amb èxit: {$satelit->getNom()}",
+            ]);
         }
 
         return $this->render('satelit/new.html.twig', array(
@@ -60,7 +64,9 @@ class SatelitController extends Controller
     /**
      * Finds and displays a satelit entity.
      *
-     * @Route("/{id}", name="satelit_show")
+     * @Route("/{id}", name="satelit_show", requirements={"id": "^\d+"})
+     * @Route("/{nom}", name="satelit_show_by_name")
+     * 
      * @Method("GET")
      */
     public function showAction(Satelit $satelit)
@@ -83,6 +89,7 @@ class SatelitController extends Controller
     {
         $deleteForm = $this->createDeleteForm($satelit);
         $editForm = $this->createForm('AppBundle\Form\SatelitType', $satelit);
+        
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -118,6 +125,8 @@ class SatelitController extends Controller
         return $this->redirectToRoute('satelit_index');
     }
 
+    
+    
     /**
      * Creates a form to delete a satelit entity.
      *

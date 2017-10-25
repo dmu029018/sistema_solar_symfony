@@ -24,7 +24,7 @@
                 <dt>Superfície</dt>
                 <dd>{{ planeta.superficie }}</dd>
                 <dt>Satèl·lits</dt>
-                {% for satelit in satelits %}
+                {% for satelit in satelits %}{#TODO: los satélites deben ser obtenibles mediante la entidad#}
                     <dd><a href="{{ path('satelit_show', {'id': satelit.id}) }}">{{ satelit.nom }}</dd>
                 {% else %}
                     <dd>Aquest planeta no té cap satèl·lit associat</dd>

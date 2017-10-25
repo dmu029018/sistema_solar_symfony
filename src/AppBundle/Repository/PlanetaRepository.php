@@ -1,5 +1,7 @@
 <?php
 
+namespace AppBundle\Repository;
+
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -9,6 +11,35 @@ use Doctrine\ORM\EntityRepository;
  */
 class PlanetaRepository extends EntityRepository
 {
+    public function selectByDistanciaMin($distancia)
+    {
+        $query = $this->_em->createQueryBuilder()
+                ->select('p')
+                ->from('AppBundle:Planeta', 'p')
+                ->where('p.distancia > :distancia')
+                ->orderBy('p.distancia', 'ASC')
+                ;
+        
+        $query->setParameter('distancia', $distancia);
+        
+        return $query->getQuery()->getResult();
+    }
+
+    public function selectByDistanciaMax($distancia)
+    {
+        $query = $this->_em->createQueryBuilder()
+                ->select('p')
+                ->from('AppBundle:Planeta', 'p')
+                ->where('p.distancia < :distancia')
+                ->orderBy('p.distancia', 'ASC')
+                ;
+        
+        $query->setParameter('distancia', $distancia);
+        
+        return $query->getQuery()->getResult();
+    }
+    
+    
     public function create(array $data = [])
     {
         
@@ -22,21 +53,30 @@ class PlanetaRepository extends EntityRepository
     public function getAllSatelits($id)
     {
         
+        return $this->_em
+                ->getRepository('AppBundle:Satelit')
+                ->findByIdPlaneta($id);
     }
     
     public function getData($id)
     {
-        
     }
     
-    public function editPlaneta($name)
+    public function editPlaneta($id)
     {
         
     }
     
-    public function borrarPlaneta($id)
+    public function delete($id)
     {
+        $em = $this->getEntityManager();
         
+        $planeta = $this->find($id);
+        
+        $em->delete($planeta);
+        $em->flush();
+        
+        return $planeta;
     }
     
 }

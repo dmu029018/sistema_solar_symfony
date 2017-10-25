@@ -33,6 +33,8 @@ class Satelit
      * @var \AppBundle\Entity\Planeta
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Planeta")
+     * 
+     * 
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_planeta", referencedColumnName="id")
      * })
