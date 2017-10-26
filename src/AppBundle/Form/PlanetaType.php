@@ -9,69 +9,64 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
 
 class PlanetaType extends AbstractType {
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options = []) 
+    public function buildForm(FormBuilderInterface $builder, array $options) 
     {
         $builder->add('nom', TextType::class, [
-                    'attr' => [
-                        'class' => 'form-control',
-                    ],
-                    'constraints' => new Length([
-                        'min' => 1,
-                        'max' => 50
-                            ])
-                ])
-                ->add('distancia', NumberType::class, [
-                    'attr' => [
-                        'class' => 'form-control',
-                        'pattern' => '\d+(.\d+)?'
-                    ],
-                ])
-                ->add('periode', NumberType::class, [
-                    'attr' => [
-                        'class' => 'form-control',
-                        'pattern' => '\d+(.\d+)?'
-                    ],
-                ])
-                ->add('diametre', NumberType::class, [
-                    'attr' => [
-                        'class' => 'form-control',
-                        'pattern' => '\d+(.\d+)?'
-                    ],
-                ])
-                ->add('situacio', ChoiceType::class, [
-                    'choices'=>[
-                        'Interior' => 'I', 
-                        'Exterior' => 'E'
-                    ],
-                    'attr' => [
-                        'class' => 'form-control',
-                        'pattern' => 'I|E'
-                    ],
-                    'constraints' => new Length([
-                        'min' => 1,
-                        'max' => 1
-                    ])
-                ])
-                ->add('tipus', ChoiceType::class, [
-                    'choices'=>[
-                        'Planeta' => 'P', 
-                        'E' => 'E'
-                    ],
-                    'attr' => [
-                        'class' => 'form-control',
-                        'pattern' => 'P|E'
-                    ],
-                    'constraints' => new Length([
-                        'min' => 1,
-                        'max' => 1
-                    ])
-                ]);
+                'attr' => ['class' => 'form-control'],
+                'constraints' => new Length(['min' => 1,'max' => 50]),
+            
+            ])
+            ->add('distancia', NumberType::class, [
+                'attr' => ['class' => 'form-control', 'pattern' => '\d+(.\d+)?'],
+            ])
+            ->add('periode', NumberType::class, [
+                'attr' => ['class' => 'form-control', 'pattern' => '\d+(.\d+)?'],
+            ])
+            ->add('diametre', NumberType::class, [
+                'attr' => ['class' => 'form-control','pattern' => '\d+(.\d+)?'],
+            ])
+            ->add('situacio', ChoiceType::class, [
+                'expanded' => true, //Es una checkbox
+                'choices'=> ['Interior' => 'I', 'Exterior' => 'E'],
+                'choice_attr'=> ['Interior' => ['checked' => true]],
+                'attr' => ['pattern' => 'I|E', 'class' => 'radio-group'],
+                'constraints' => new Length(['min' => 1, 'max' => 1])
+            ])
+            ->add('tipus', ChoiceType::class, [
+                'choices'=>['Planeta' => 'P', 'Planeta nan' => 'E'],
+                'choice_attr' => ['Planeta' => ["selected" => true]],
+                'attr' => ['class' => 'form-control','pattern' => 'P|E'],
+                'constraints' => new Length(['min' => 1,'max' => 1])
+            ]);
+        
+        
+        $submitAttr = [];
+        
+            if($options['form_submit'] === 'insert')
+            {
+                $submitAttr = [
+                    'attr' => ['class' => 'btn btn-success'],
+                    'label' => 'Inserir'
+                ];
+            }
+            else if($options['form_submit'] === 'edit')
+            {
+                $submitAttr = [
+                    'attr' => ['class' => 'btn btn-warning'],
+                    'label' => 'Editar'
+                ];
+            }
+            
+            $builder->add("submit", SubmitType::class, $submitAttr);                
+        
     }
 
     /**
@@ -79,7 +74,8 @@ class PlanetaType extends AbstractType {
      */
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Planeta'
+            'data_class' => 'AppBundle\Entity\Planeta',
+            'form_submit' => 'insert'
         ));
     }
 

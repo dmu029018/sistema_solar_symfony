@@ -19,6 +19,6 @@ class ManagerHelper
     
     public function getRepositories()
     {
-        $tasks = $this->manager->getRepository($entityName);
+       // $tasks = $this->manager->getRepository($entityName);
     }
 }

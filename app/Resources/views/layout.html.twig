@@ -35,6 +35,15 @@
         {% endif %}
         
         
+        {% if errors is defined %}
+            {% for error in errors %}
+                <div class="alert alert-danger">
+                    {{error.message}}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        
         <div class="container" id="main-container">
             {% block body %}
             {% endblock %}

@@ -4,8 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Satelit;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Planeta
@@ -18,20 +17,27 @@ class Planeta
     /**
      * @var string
      *
+     * @Assert\NotBlank()
+     * @Assert\Length(min = 3, max = 20)
      * @ORM\Column(name="nom", type="string", length=20, nullable=false)
+     * @Assert\NotBlank()
      */
     private $nom;
 
     /**
      * @var float
      *
+     * @Assert\NotBlank()
+     * @Assert\Range( min = 0 , minMessage = "La distància ha de ser un valor positiu.")
      * @ORM\Column(name="distancia", type="float", precision=10, scale=0, nullable=false)
      */
     private $distancia;
 
     /**
      * @var float
-     *
+     * 
+     * @Assert\NotBlank()
+     * @Assert\Range( min = 0 , minMessage = "El període ha de ser un valor positiu.")
      * @ORM\Column(name="periode", type="float", precision=10, scale=0, nullable=false)
      */
     private $periode;
@@ -39,6 +45,8 @@ class Planeta
     /**
      * @var float
      *
+     * @Assert\NotBlank()
+     * @Assert\Range( min = 0 , minMessage = "El diàmetre ha de ser un valor positiu.")
      * @ORM\Column(name="diametre", type="float", precision=10, scale=0, nullable=false)
      */
     private $diametre;
@@ -46,6 +54,8 @@ class Planeta
     /**
      * @var string
      *
+     * @Assert\NotBlank()
+     * @Assert\Choice(choices = {"I", "E"}, message = "Situació pot contenir només un dels següents valors: 'I', 'E'")
      * @ORM\Column(name="situacio", type="string", length=1, nullable=false)
      */
     private $situacio = 'E';
@@ -53,6 +63,8 @@ class Planeta
     /**
      * @var string
      *
+     * @Assert\NotBlank()
+     * @Assert\Choice(choices = {"P", "E"}, message = "Tipus pot contenir només un dels següents valors: 'P', 'E'")
      * @ORM\Column(name="tipus", type="string", length=1, nullable=false)
      */
     private $tipus = 'P';
@@ -80,16 +92,31 @@ class Planeta
      */
     protected $satelits;
     
-    public function __construct()
+    public function __construct(array $params = [])
     {
-        $this->satelits = new ArrayCollection();
+        $this->updateParams($params);
+        //$this->satelits = new ArrayCollection();
     }
-
-    public function getId() {
+    
+    /**
+     * 
+     * @param array $params Array clave-valor con parametros y valores
+     */
+    public function updateParams(array $params)
+    {
+        foreach($params as $k => $v)
+        {
+            $this->{"set" . ucfirst($k)}($v);
+        }
+    }
+    
+    public function getId() 
+    {
         return $this->id;
     }
 
-    public function getNom() {
+    public function getNom() 
+    {
         return $this->nom;
     }
 

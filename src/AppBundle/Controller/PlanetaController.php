@@ -2,10 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use Exception;
 use AppBundle\Entity\Planeta;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Planeta controller.
@@ -44,14 +46,15 @@ class PlanetaController extends Controller
     public function newAction(Request $request)
     {
         $planeta = new Planeta();
-        $form = $this->createForm('AppBundle\Form\PlanetaType', $planeta);
+        $form = $this->createForm('AppBundle\Form\PlanetaType', $planeta, [
+            'form_submit' => 'insert'
+        ]);
         $form->handleRequest($request);
 
+        
         if ($form->isSubmitted() && $form->isValid()) 
         {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($planeta);
-            $em->flush();
+            $this->getDoctrine()->getRepository('AppBundle:Planeta')->insert($planeta);
 
             return $this->redirectToRoute('planeta_show', [
                 'id' => $planeta->getId(),
@@ -59,9 +62,13 @@ class PlanetaController extends Controller
             ]);
         }
 
+        $validator = $this->get("validator");
+        $errors = $validator->validate($planeta);
+        
         return $this->render('planeta/new.html.twig', array(
             'planeta' => $planeta,
             'form' => $form->createView(),
+            'errors' => $errors
         ));
     }
 
@@ -137,7 +144,9 @@ class PlanetaController extends Controller
     public function editAction(Request $request, Planeta $planetum)
     {
         $deleteForm = $this->createDeleteForm($planetum);
-        $editForm = $this->createForm('AppBundle\Form\PlanetaType', $planetum);
+        $editForm = $this->createForm('AppBundle\Form\PlanetaType', $planetum, [
+            'form_submit' => 'edit'
+        ]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -176,16 +185,16 @@ class PlanetaController extends Controller
     }
 
     /**
-     * Creates a form to delete a planetum entity.
+     * Crea un formulari per a esborrar una entitat de planeta de la base de dades.
      *
-     * @param Planeta $planetum The planetum entity
+     * @param Planeta $planeta Entitat planeta
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createDeleteForm(Planeta $planetum)
+    private function createDeleteForm(Planeta $planeta)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('planeta_delete', array('id' => $planetum->getId())))
+            ->setAction($this->generateUrl('planeta_delete', array('id' => $planeta->getId())))
             ->setMethod('DELETE')
             ->getForm()
         ;

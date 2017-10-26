@@ -3,6 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use AppBundle\Entity\Planeta;
 
 /**
  * Description of PlanetaRepository
@@ -40,9 +41,11 @@ class PlanetaRepository extends EntityRepository
     }
     
     
-    public function create(array $data = [])
+    public function insert(Planeta $planeta)
     {
-        
+        $em = $this->_em;
+        $em->persist($planeta);
+        $em->flush();
     }
     
     public function addSatelit($id_planeta, $name)
