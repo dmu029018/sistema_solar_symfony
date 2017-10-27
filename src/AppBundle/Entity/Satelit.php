@@ -2,7 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\CustomAbstraction\Entity as AppEntity;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Satelit
@@ -11,11 +13,15 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\SatelitRepository")
  * 
  */
-class Satelit
+class Satelit extends AppEntity
 {
     /**
      * @var string
      *
+     * 
+     * @Assert\NotBlank(message="Nom ha de tenir un valor.")
+     * @Assert\Length(min = 3, max = 20, minMessage="El nom d'un satèl·lit ha de tenir entre 3 i 20 caràcters.", maxMessage="El nom d'un satèl·lit ha de tenir entre 3 i 20 caràcters.")
+     * 
      * @ORM\Column(name="nom", type="string", length=20, nullable=false)
      */
     private $nom;
@@ -34,13 +40,15 @@ class Satelit
      *
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Planeta")
      * 
-     * 
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="id_planeta", referencedColumnName="id")
      * })
      */
     private $idPlaneta;
 
+    
+    
+    
     function getNom() {
         return $this->nom;
     }

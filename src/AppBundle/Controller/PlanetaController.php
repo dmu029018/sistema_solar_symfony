@@ -8,7 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException as FRKE;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException as UnE;
 /**
  * Planeta controller.
  *
@@ -24,17 +25,12 @@ class PlanetaController extends Controller
      */
     public function indexAction($notification = null)
     {
-        $params = [
+        $planetes = $this->getDoctrine()->getRepository('AppBundle:Planeta')->findAll();
+        
+        return $this->render('planeta/index.html.twig', [
             'page_title' => "Llista de planetes",
-            'planetas' => $this->getDoctrine()->getRepository('AppBundle:Planeta')->findAll(),
-        ];
-        
-        if($notification)
-        {
-            $params['notification'] = $notification;
-        }
-        
-        return $this->render('planeta/index.html.twig', $params);
+            'planetas' => $planetes,
+        ]);
     }
 
     /**
@@ -52,24 +48,45 @@ class PlanetaController extends Controller
         $form->handleRequest($request);
 
         
-        if ($form->isSubmitted() && $form->isValid()) 
+        if ($form->isSubmitted())
         {
-            $this->getDoctrine()->getRepository('AppBundle:Planeta')->insert($planeta);
+            if($form->isValid()) 
+            {
+                
+                try
+                {
+                    $this->getDoctrine()->getRepository('AppBundle:Planeta')->insert($planeta);
+                    $this->addFlash('success', "Nou planeta inserit: {$planeta->getNom()}");
+                }
+                catch(UnE $ex)
+                {
+                    $this->addFlash('error', "Error al inserir el planeta {$planeta->getNom()}: ja existeix un planeta amb aquest nom");
+                    return $this->redirectToRoute('planeta_index');
+                }
+                
+                return $this->redirectToRoute('planeta_show', [
+                    'id' => $planeta->getId()
+                ]);
+            }
+            else 
+            {
+                
+                $validator = $this->get("validator");
+                $errors = $validator->validate($planeta);
 
-            return $this->redirectToRoute('planeta_show', [
-                'id' => $planeta->getId(),
-                'notification' => "Nou planeta inserit: {$planeta->getNom()}",
-            ]);
+                foreach($errors as $error)
+                {
+                    $this->addFlash('error', $error->getMessage());
+                }
+            }
         }
 
-        $validator = $this->get("validator");
-        $errors = $validator->validate($planeta);
         
-        return $this->render('planeta/new.html.twig', array(
+        
+        return $this->render('planeta/new.html.twig', [
             'planeta' => $planeta,
             'form' => $form->createView(),
-            'errors' => $errors
-        ));
+        ]);
     }
 
     /**
@@ -130,8 +147,6 @@ class PlanetaController extends Controller
             'page_title' => $filter_name,
             'planetas' => $planetes,
         ]);
-        
-        
     }
 
     
@@ -141,10 +156,10 @@ class PlanetaController extends Controller
      * @Route("/{id}/edit", name="planeta_edit")
      * @Method({"GET", "POST"})
      */
-    public function editAction(Request $request, Planeta $planetum)
+    public function editAction(Request $request, Planeta $planeta)
     {
-        $deleteForm = $this->createDeleteForm($planetum);
-        $editForm = $this->createForm('AppBundle\Form\PlanetaType', $planetum, [
+        $deleteForm = $this->createDeleteForm($planeta);
+        $editForm = $this->createForm('AppBundle\Form\PlanetaType', $planeta, [
             'form_submit' => 'edit'
         ]);
         $editForm->handleRequest($request);
@@ -152,13 +167,15 @@ class PlanetaController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('planeta_edit', [
-                'id' => $planetum->getId()
+            $this->addFlash('success', "Planeta {$planeta->getNom()} modificat amb èxit.");
+            
+            return $this->redirectToRoute('planeta_show', [
+                'id' => $planeta->getId()
             ]);
         }
 
         return $this->render('planeta/edit.html.twig', array(
-            'planeta' => $planetum,
+            'planeta' => $planeta,
             'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         ));
@@ -170,15 +187,24 @@ class PlanetaController extends Controller
      * @Route("/{id}", name="planeta_delete")
      * @Method("DELETE")
      */
-    public function deleteAction(Request $request, Planeta $planetum)
+    public function deleteAction(Request $request, Planeta $planeta)
     {
-        $form = $this->createDeleteForm($planetum);
+        $form = $this->createDeleteForm($planeta);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($planetum);
-            $em->flush();
+            try
+            {
+                
+                $this->getDoctrine()->getRepository('AppBundle:Planeta')->delete($planeta);
+
+                $this->addFlash('success', "Planeta eliminat amb èxit: {$planeta->getNom()}");
+            } 
+            catch (FRKE $ex) 
+            {
+                $this->addFlash('error', "El planeta {$planeta->getNom()} no pot eliminar-se: Encara té satèl·lits associats");
+            }
+            
         }
 
         return $this->redirectToRoute('planeta_index');

@@ -7,10 +7,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-
 
 class PlanetaType extends AbstractType {
 
@@ -23,8 +23,22 @@ class PlanetaType extends AbstractType {
                 'attr' => ['class' => 'form-control'],
                 'constraints' => new Length(['min' => 1,'max' => 50]),
             
-            ])
-            ->add('distancia', NumberType::class, [
+            ]);
+        
+        if($options['form_submit'] === 'insert')
+        {
+            $builder->add('nom', TextType::class, [
+                'attr' => ['class' => 'form-control'],
+                'constraints' => new Length(['min' => 1,'max' => 50]),
+            
+            ]);
+        }
+        else if($options['form_submit'] === 'edit')
+        {
+            $builder->add('nom', HiddenType::class);
+        }
+        
+        $builder->add('distancia', NumberType::class, [
                 'attr' => ['class' => 'form-control', 'pattern' => '\d+(.\d+)?'],
             ])
             ->add('periode', NumberType::class, [
@@ -73,10 +87,10 @@ class PlanetaType extends AbstractType {
      * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\Planeta',
             'form_submit' => 'insert'
-        ));
+        ]);
     }
 
     /**

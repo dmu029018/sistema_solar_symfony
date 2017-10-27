@@ -33,3 +33,14 @@ label + .form-control
 {
     margin-bottom: 0.5em;
 }
+
+.alert {
+    width: 100%;
+    z-index: 5;
+    margin: 0;
+    padding: 1em;
+    font-size: 1.5em;
+    position: fixed;
+    text-align: center;
+    cursor: pointer;
+}

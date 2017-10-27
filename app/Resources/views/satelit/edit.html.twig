@@ -1,23 +1,24 @@
 {% extends 'layout.html.twig' %}
 
-{% block title %}Editar satélite{% endblock %}
+{% block title %}Editar satèl·lit: {{ satelit.nom }}{% endblock %}
 
 {% block body %}
-    <h1>Satelit edit</h1>
+    <h1>Editar satèl·lit: {{ satelit.nom }}</h1>
 
     {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
+        <div class="form-group">
+            {{ form_widget(edit_form) }}
+        </div>
     {{ form_end(edit_form) }}
 
-    <ul>
-        <li>
-            <a href="{{ path('satelit_index') }}">Back to the list</a>
-        </li>
-        <li>
+    <div class="row">
+        <div class="col-md-6">
+            <a class="btn btn-block btn-info" href="{{ path('satelit_index') }}">Tornar a la llista</a>
+        </div>
+        <div class="col-md-6">
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+            <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
             {{ form_end(delete_form) }}
-        </li>
-    </ul>
+        </div>
+    </div>
 {% endblock %}

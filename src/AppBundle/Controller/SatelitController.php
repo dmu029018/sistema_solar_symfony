@@ -5,12 +5,14 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Satelit;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException as UnE;
 
 /**
  * Satelit controller.
  *
- * @Route("satelit")
+ * @Route("/satelit")
  */
 class SatelitController extends Controller
 {
@@ -22,9 +24,7 @@ class SatelitController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $satelits = $em->getRepository('AppBundle:Satelit')->findAll();
+        $satelits= $this->getDoctrine()->getManager()->getRepository('AppBundle:Satelit')->findAll();
 
         return $this->render('satelit/index.html.twig', array(
             'satelits' => $satelits,
@@ -41,17 +41,29 @@ class SatelitController extends Controller
     {
         $satelit = new Satelit();
         $em = $this->getDoctrine()->getManager();
+     
+        $planetes = $this->getDoctrine()->getManager()->getRepository('AppBundle:Planeta')->findAll();
         
-        $form = $this->createForm('AppBundle\Form\SatelitType', $satelit);
+        $form = $this->createForm('AppBundle\Form\SatelitType', $satelit, [
+            'planetes'=> $planetes,
+            'form_submit' => 'insert'
+        ]);
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($satelit);
-            $em->flush();
-
+            try
+            {
+            $this->getDoctrine()->getManager()->getRepository('AppBundle:Satelit')->insert($satelit);
+            $this->addFlash('success', "Satèl·lit afegit amb èxit: {$satelit->getNom()}");
+            }catch(UnE $ex)
+            {
+                $this->addFlash('error', "Error al inserir el satèl·lit {$satelit->getNom()}: ja existeix un satèl·lit amb aquest nom");
+                    return $this->redirectToRoute('satelit_index');
+            }
+            
             return $this->redirectToRoute('satelit_show', [
                 'id' => $satelit->getId(),
-                'notification' => "Satèl·lit afegit amb èxit: {$satelit->getNom()}",
             ]);
         }
 
@@ -88,13 +100,20 @@ class SatelitController extends Controller
     public function editAction(Request $request, Satelit $satelit)
     {
         $deleteForm = $this->createDeleteForm($satelit);
-        $editForm = $this->createForm('AppBundle\Form\SatelitType', $satelit);
+        
+        $planetes = $this->getDoctrine()->getManager()->getRepository('AppBundle:Planeta')->findAll();
+        
+        $editForm = $this->createForm('AppBundle\Form\SatelitType', $satelit, [
+            'form_submit' => 'edit',
+            'planetes'=> $planetes,
+        ]);
         
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
+            
+            $this->addFlash('success', "El satèl·lit {$satelit->getNom()} ha sigut reassignat al planeta {$satelit->getIdPlaneta()->getNom()}");
             return $this->redirectToRoute('satelit_edit', array('id' => $satelit->getId()));
         }
 
@@ -116,10 +135,11 @@ class SatelitController extends Controller
         $form = $this->createDeleteForm($satelit);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($satelit);
-            $em->flush();
+        if ($form->isSubmitted() && $form->isValid()) 
+        {
+            $this->getDoctrine()->getRepository('AppBundle:Satelit')->delete($satelit);
+            $this->addFlash('success', "Satèl·lit eliminat amb èxit: {$satelit->getNom()}");
+            
         }
 
         return $this->redirectToRoute('satelit_index');

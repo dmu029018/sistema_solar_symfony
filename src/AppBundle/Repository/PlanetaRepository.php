@@ -63,6 +63,7 @@ class PlanetaRepository extends EntityRepository
     
     public function getData($id)
     {
+        
     }
     
     public function editPlaneta($id)
@@ -70,13 +71,11 @@ class PlanetaRepository extends EntityRepository
         
     }
     
-    public function delete($id)
+    public function delete(Planeta $planeta)
     {
         $em = $this->getEntityManager();
         
-        $planeta = $this->find($id);
-        
-        $em->delete($planeta);
+        $em->remove($planeta);
         $em->flush();
         
         return $planeta;

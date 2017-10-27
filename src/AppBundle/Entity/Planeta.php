@@ -2,9 +2,11 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\CustomAbstraction\Entity as AppEntity;
 use AppBundle\Entity\Satelit;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Planeta
@@ -12,23 +14,23 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="planeta", uniqueConstraints={@ORM\UniqueConstraint(name="UQ_planeta_nom", columns={"nom"})})
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PlanetaRepository")
  */
-class Planeta
+class Planeta extends AppEntity
 {
     /**
      * @var string
      *
-     * @Assert\NotBlank()
-     * @Assert\Length(min = 3, max = 20)
+     * @Assert\NotBlank(message="Nom ha de tenir un valor.")
+     * @Assert\Length(min = 3, max = 20, minMessage="El nom d'un planeta ha de tenir entre 3 i 20 caràcters.", maxMessage="El nom d'un planeta ha de tenir entre 3 i 20 caràcters.")
      * @ORM\Column(name="nom", type="string", length=20, nullable=false)
-     * @Assert\NotBlank()
      */
     private $nom;
 
     /**
      * @var float
      *
-     * @Assert\NotBlank()
-     * @Assert\Range( min = 0 , minMessage = "La distància ha de ser un valor positiu.")
+     * @Assert\NotBlank(message = "La distància ha de tenir un valor.")
+     * @Assert\Type(type="numeric", message = "La distància ha de tenir un valor numèric.")
+     * @Assert\Range( min = 0 , minMessage = "La distància ha de tenir un valor positiu.")
      * @ORM\Column(name="distancia", type="float", precision=10, scale=0, nullable=false)
      */
     private $distancia;
@@ -36,8 +38,9 @@ class Planeta
     /**
      * @var float
      * 
-     * @Assert\NotBlank()
-     * @Assert\Range( min = 0 , minMessage = "El període ha de ser un valor positiu.")
+     * @Assert\NotBlank(message="El període ha de tenir un valor.")
+     * @Assert\Range( min = 0 , minMessage = "El període ha de tenir un valor positiu.")
+     * @Assert\Type(type="numeric", message = "El període ha de tenir un valor numèric.")
      * @ORM\Column(name="periode", type="float", precision=10, scale=0, nullable=false)
      */
     private $periode;
@@ -45,8 +48,9 @@ class Planeta
     /**
      * @var float
      *
-     * @Assert\NotBlank()
-     * @Assert\Range( min = 0 , minMessage = "El diàmetre ha de ser un valor positiu.")
+     * @Assert\NotBlank(message="El diàmetre ha de tenir un valor.")
+     * @Assert\Type(type="numeric", message = "El diàmetre ha de tenir un valor numèric.")
+     * @Assert\Range( min = 0 , minMessage = "El diàmetre ha de tenir un valor positiu.")
      * @ORM\Column(name="diametre", type="float", precision=10, scale=0, nullable=false)
      */
     private $diametre;
@@ -54,7 +58,7 @@ class Planeta
     /**
      * @var string
      *
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Escull una opció per a situació.")
      * @Assert\Choice(choices = {"I", "E"}, message = "Situació pot contenir només un dels següents valors: 'I', 'E'")
      * @ORM\Column(name="situacio", type="string", length=1, nullable=false)
      */
@@ -63,7 +67,7 @@ class Planeta
     /**
      * @var string
      *
-     * @Assert\NotBlank()
+     * @Assert\NotBlank(message="Escull una opció per a tipus.")
      * @Assert\Choice(choices = {"P", "E"}, message = "Tipus pot contenir només un dels següents valors: 'P', 'E'")
      * @ORM\Column(name="tipus", type="string", length=1, nullable=false)
      */
@@ -94,20 +98,8 @@ class Planeta
     
     public function __construct(array $params = [])
     {
-        $this->updateParams($params);
-        //$this->satelits = new ArrayCollection();
-    }
-    
-    /**
-     * 
-     * @param array $params Array clave-valor con parametros y valores
-     */
-    public function updateParams(array $params)
-    {
-        foreach($params as $k => $v)
-        {
-            $this->{"set" . ucfirst($k)}($v);
-        }
+        parent::__construct($params);
+        $this->satelits = new ArrayCollection();
     }
     
     public function getId() 
@@ -143,9 +135,8 @@ class Planeta
     public function getSuperficie() {
         return $this->superficie;
     }
-
-    public function getSatelits()
-    {
+    
+    public function getSatelits() {
         return $this->satelits;
     }
     
@@ -171,6 +162,10 @@ class Planeta
 
     public function setTipus($tipus) {
         $this->tipus = $tipus;
+    }
+
+    public function setSatelits($satelits) {
+        $this->satelits = $satelits;
     }
     
 }

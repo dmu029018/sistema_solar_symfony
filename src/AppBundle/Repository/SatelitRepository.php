@@ -3,7 +3,7 @@
 namespace AppBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
+use AppBundle\Entity\Satelit;
 /**
  * Description of SatelitRepository
  *
@@ -17,25 +17,20 @@ class SatelitRepository extends EntityRepository
         return $this->findBy(['idPlaneta'=>$id]);
     }
     
-    public function insert(array $data = [])
+    public function insert(Satelit $satelit)
     {
         $em = $this->getEntityManager();
-        
-        $satelit = new Satelit($data);
-        
         $em->persist($satelit);
         $em->flush();
         
         return $satelit;
     }
     
-    public function delete($id)
+    public function delete(Satelit $satelit)
     {
         $em = $this->getEntityManager();
         
-        $satelit = $this->find($id);
-        
-        $em->delete($satelit);
+        $em->remove($satelit);
         $em->flush();
         
         return $satelit;
