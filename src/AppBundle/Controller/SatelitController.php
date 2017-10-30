@@ -44,10 +44,7 @@ class SatelitController extends Controller
      
         $planetes = $this->getDoctrine()->getManager()->getRepository('AppBundle:Planeta')->findAll();
         
-        $form = $this->createForm('AppBundle\Form\SatelitType', $satelit, [
-            'planetes'=> $planetes,
-            'form_submit' => 'insert'
-        ]);
+        $form = $this->createForm('AppBundle\Form\SatelitType', $satelit);
         
         $form->handleRequest($request);
 
@@ -103,10 +100,7 @@ class SatelitController extends Controller
         
         $planetes = $this->getDoctrine()->getManager()->getRepository('AppBundle:Planeta')->findAll();
         
-        $editForm = $this->createForm('AppBundle\Form\SatelitType', $satelit, [
-            'form_submit' => 'edit',
-            'planetes'=> $planetes,
-        ]);
+        $editForm = $this->createForm('AppBundle\Form\SatelitType', $satelit);
         
         $editForm->handleRequest($request);
 

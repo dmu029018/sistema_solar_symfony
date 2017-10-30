@@ -19,21 +19,46 @@ class SatelitRepository extends EntityRepository
     
     public function insert(Satelit $satelit)
     {
-        $em = $this->getEntityManager();
-        $em->persist($satelit);
-        $em->flush();
         
-        return $satelit;
+        $success = true;
+        
+        try 
+        {
+            $em = $this->getEntityManager();
+
+            $em->persist($satelit);
+            $em->flush();
+        
+        }
+        catch (Exception $ex) 
+        {
+            $success = false;
+        }
+
+        return $success;
+        
     }
     
     public function delete(Satelit $satelit)
     {
-        $em = $this->getEntityManager();
+        $success = true;
         
-        $em->remove($satelit);
-        $em->flush();
+        try 
+        {
+            
+            $em = $this->getEntityManager();
+
+            $em->remove($satelit);
+            $em->flush();
         
-        return $satelit;
+        }
+        catch (Exception $ex) 
+        {
+            $success = false;
+            
+        }
+
+        return $success;
     }
     
     

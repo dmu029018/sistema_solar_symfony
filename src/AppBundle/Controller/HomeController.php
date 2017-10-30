@@ -19,7 +19,10 @@ class HomeController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('home/index.html.twig');
+        return $this->render('home/index.html.twig', [
+            
+            'page_title' => "Inici"
+        ]);
     }
     
 }

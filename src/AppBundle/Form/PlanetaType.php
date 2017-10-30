@@ -2,42 +2,21 @@
 
 namespace AppBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormEvents;
 
-class PlanetaType extends AbstractType {
+
+class PlanetaType extends CosmicBodyType{
 
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options) 
     {
-        $builder->add('nom', TextType::class, [
-                'attr' => ['class' => 'form-control'],
-                'constraints' => new Length(['min' => 1,'max' => 50]),
-            
-            ]);
-        
-        if($options['form_submit'] === 'insert')
-        {
-            $builder->add('nom', TextType::class, [
-                'attr' => ['class' => 'form-control'],
-                'constraints' => new Length(['min' => 1,'max' => 50]),
-            
-            ]);
-        }
-        else if($options['form_submit'] === 'edit')
-        {
-            $builder->add('nom', HiddenType::class);
-        }
-        
         $builder->add('distancia', NumberType::class, [
                 'attr' => ['class' => 'form-control', 'pattern' => '\d+(.\d+)?'],
             ])
@@ -61,25 +40,7 @@ class PlanetaType extends AbstractType {
                 'constraints' => new Length(['min' => 1,'max' => 1])
             ]);
         
-        
-        $submitAttr = [];
-        
-            if($options['form_submit'] === 'insert')
-            {
-                $submitAttr = [
-                    'attr' => ['class' => 'btn btn-success'],
-                    'label' => 'Inserir'
-                ];
-            }
-            else if($options['form_submit'] === 'edit')
-            {
-                $submitAttr = [
-                    'attr' => ['class' => 'btn btn-warning'],
-                    'label' => 'Editar'
-                ];
-            }
-            
-            $builder->add("submit", SubmitType::class, $submitAttr);                
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'addDifferentFields']);
         
     }
 
@@ -89,7 +50,7 @@ class PlanetaType extends AbstractType {
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults([
             'data_class' => 'AppBundle\Entity\Planeta',
-            'form_submit' => 'insert'
+            'validation_groups' => false,
         ]);
     }
 
@@ -100,4 +61,5 @@ class PlanetaType extends AbstractType {
         return 'appbundle_planeta';
     }
 
+    
 }

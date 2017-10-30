@@ -1,24 +1,13 @@
-{% extends 'layout.html.twig' %}
+{% extends 'form-template.html.twig' %}
 
-{% block title %}Editar satèl·lit: {{ satelit.nom }}{% endblock %}
 
-{% block body %}
-    <h1>Editar satèl·lit: {{ satelit.nom }}</h1>
+{% set page_title = 'Editar satèl·lit: ' ~ satelit.nom %}
+{% set form = edit_form %}
+{% set entity = 'satelit' %}
 
-    {{ form_start(edit_form) }}
-        <div class="form-group">
-            {{ form_widget(edit_form) }}
-        </div>
-    {{ form_end(edit_form) }}
-
-    <div class="row">
-        <div class="col-md-6">
-            <a class="btn btn-block btn-info" href="{{ path('satelit_index') }}">Tornar a la llista</a>
-        </div>
-        <div class="col-md-6">
-            {{ form_start(delete_form) }}
-            <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
-        </div>
+{% block form %}
+    <div class="form-group">
+        {{ form_label(form.idPlaneta) }}
+        {{ form_widget(form.idPlaneta) }}
     </div>
 {% endblock %}

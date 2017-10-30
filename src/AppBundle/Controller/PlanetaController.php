@@ -2,14 +2,13 @@
 
 namespace AppBundle\Controller;
 
-use Exception;
 use AppBundle\Entity\Planeta;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException as FRKE;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException as UnE;
+
+
 /**
  * Planeta controller.
  *
@@ -23,7 +22,7 @@ class PlanetaController extends Controller
      * @Route("/", name="planeta_index")
      * @Method("GET")
      */
-    public function indexAction($notification = null)
+    public function indexAction()
     {
         $planetes = $this->getDoctrine()->getRepository('AppBundle:Planeta')->findAll();
         
@@ -42,43 +41,26 @@ class PlanetaController extends Controller
     public function newAction(Request $request)
     {
         $planeta = new Planeta();
-        $form = $this->createForm('AppBundle\Form\PlanetaType', $planeta, [
-            'form_submit' => 'insert'
-        ]);
+        $form = $this->createForm('AppBundle\Form\PlanetaType', $planeta);
         $form->handleRequest($request);
-
         
-        if ($form->isSubmitted())
+        if($form->isSubmitted() && $form->isValid()) 
         {
-            if($form->isValid()) 
+                
+            if($this->getDoctrine()->getRepository('AppBundle:Planeta')->insert($planeta))
             {
-                
-                try
-                {
-                    $this->getDoctrine()->getRepository('AppBundle:Planeta')->insert($planeta);
-                    $this->addFlash('success', "Nou planeta inserit: {$planeta->getNom()}");
-                }
-                catch(UnE $ex)
-                {
-                    $this->addFlash('error', "Error al inserir el planeta {$planeta->getNom()}: ja existeix un planeta amb aquest nom");
-                    return $this->redirectToRoute('planeta_index');
-                }
-                
+                $this->addFlash('success', "Nou planeta inserit: {$planeta->getNom()}");
+
                 return $this->redirectToRoute('planeta_show', [
                     'id' => $planeta->getId()
                 ]);
             }
             else 
             {
-                
-                $validator = $this->get("validator");
-                $errors = $validator->validate($planeta);
-
-                foreach($errors as $error)
-                {
-                    $this->addFlash('error', $error->getMessage());
-                }
+                $this->addFlash('error', "Error al inserir el planeta {$planeta->getNom()}: ja existeix un planeta amb aquest nom");
+                return $this->redirectToRoute('planeta_index');
             }
+            
         }
 
         
@@ -92,35 +74,27 @@ class PlanetaController extends Controller
     /**
      * Finds and displays a planetum entity.
      * 
-     * CURIOSIDAD: Si le pasas un objeto como argumento a la acción(planeta),
-     * pero le pasas al slug un argumento que sea una propiedad de dicho objeto, 
-     * buscará el objeto que coincida. Para acciones de este tipo se aconseja que
-     * se utilicen propiedades únicas. Esto nos permite buscar por nombre o por
-     * id usando la misma ruta.
-     *
      * @Route("/{id}", name="planeta_show", requirements={"id": "^\d+"})
      * @Route("/{nom}", name="planeta_show_by_name")
      * @Method({"GET", "POST"})
      */
-    public function showAction(Planeta $planeta, $notification = null)
+    public function showAction(Planeta $planeta)
     {
+        if($planeta === null) 
+        {
+            $this->addFlash('error', "No s'ha trobat el planeta...");
+            $this->redirectToRoute("planeta_index", 404);
+        }
+
         $deleteForm = $this->createDeleteForm($planeta);
 
-        $satelits = $this->getDoctrine()->getRepository('AppBundle:Planeta')->getAllSatelits($planeta->getId());
+        $satelits = $this->getDoctrine()->getRepository('AppBundle:Planeta')->getAllSatelitsForAPlanet($planeta->getId());
         
-        
-        $params = [
+        return $this->render('planeta/show.html.twig', [
             'planeta' => $planeta,
             'satelits' => $satelits,
             'delete_form' => $deleteForm->createView(),
-        ];
-        
-        if($notification)
-        {
-            $params['notification'] = $notification;
-        }
-        
-        return $this->render('planeta/show.html.twig', $params);
+        ]);
     }
 
     /**
@@ -159,9 +133,7 @@ class PlanetaController extends Controller
     public function editAction(Request $request, Planeta $planeta)
     {
         $deleteForm = $this->createDeleteForm($planeta);
-        $editForm = $this->createForm('AppBundle\Form\PlanetaType', $planeta, [
-            'form_submit' => 'edit'
-        ]);
+        $editForm = $this->createForm('AppBundle\Form\PlanetaType', $planeta);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -193,14 +165,12 @@ class PlanetaController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            try
+           
+            if($this->getDoctrine()->getRepository('AppBundle:Planeta')->delete($planeta))
             {
-                
-                $this->getDoctrine()->getRepository('AppBundle:Planeta')->delete($planeta);
-
                 $this->addFlash('success', "Planeta eliminat amb èxit: {$planeta->getNom()}");
-            } 
-            catch (FRKE $ex) 
+            }
+            else
             {
                 $this->addFlash('error', "El planeta {$planeta->getNom()} no pot eliminar-se: Encara té satèl·lits associats");
             }
@@ -224,5 +194,39 @@ class PlanetaController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+    
+    /**
+     * PROVISIONAL
+     * 
+     * Create a pdf file for a planet.
+     * 
+     * @Route("/{id}/pdf", name="planeta_pdf", requirements={"id": "^\d+"})
+     * @Route("/{nom}/pdf", name="planeta_pdf_by_name")
+     * @Method({"GET", "POST"})
+     */
+    public function toPdfAction(Planeta $planeta) {
+        if($planeta === null) 
+        {
+            $this->addFlash('error', "No s'ha trobat el planeta...");
+            $this->redirectToRoute("planeta_index", 404);
+        }
+
+        $deleteForm = $this->createDeleteForm($planeta);
+
+        $satelits = $this->getDoctrine()->getRepository('AppBundle:Planeta')->getAllSatelitsForAPlanet($planeta->getId());
+        //TODO: Que funcione
+        /*
+        return new PdfResponse($this->get('knp_snappy.pdf')
+                ->getOutputFromHtml($this->renderView("planeta/show.html.twig"))
+                
+                );
+        */
+        return $this->render('planeta/show.html.twig', [
+            'planeta' => $planeta,
+            'satelits' => $satelits,
+            'delete_form' => $deleteForm->createView(),
+        ]);
+         
     }
 }

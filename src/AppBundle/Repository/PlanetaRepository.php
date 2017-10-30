@@ -8,7 +8,7 @@ use AppBundle\Entity\Planeta;
 /**
  * Description of PlanetaRepository
  *
- * @author alumne
+ * @author David
  */
 class PlanetaRepository extends EntityRepository
 {
@@ -40,45 +40,65 @@ class PlanetaRepository extends EntityRepository
         return $query->getQuery()->getResult();
     }
     
-    
+    /**
+     * Inserta un planeta a la base de dades.
+     * @param Planeta $planeta
+     * @return boolean True si la inserció del planeta s'ha realitzat amb èxit
+     */
     public function insert(Planeta $planeta)
     {
-        $em = $this->_em;
-        $em->persist($planeta);
-        $em->flush();
+        $success = true;
+        
+        try
+        {
+            $em = $this->_em;
+            $em->persist($planeta);
+            $em->flush();
+        }
+        catch(Exception $ex)
+        {
+            $success =  false;
+        }
+        
+        return $success;
     }
     
-    public function addSatelit($id_planeta, $name)
-    {
-        
-    }
     
-    public function getAllSatelits($id)
+    /**
+     * Torna tots els satèl·lits que pertanyen a un planeta.
+     * @param int $id
+     * @return array 
+     */
+    public function getAllSatelitsForAPlanet($id)
     {
-        
         return $this->_em
                 ->getRepository('AppBundle:Satelit')
                 ->findByIdPlaneta($id);
     }
     
-    public function getData($id)
-    {
-        
-    }
-    
-    public function editPlaneta($id)
-    {
-        
-    }
-    
+    /**
+     * Elimina un planeta de la base de dades
+     * @param Planeta $planeta
+     * @return boolean True Si la eliminació ha sigut exitosa
+     */
     public function delete(Planeta $planeta)
     {
-        $em = $this->getEntityManager();
+        $success = true;
         
-        $em->remove($planeta);
-        $em->flush();
+        try
+        {
+            $em = $this->getEntityManager();
+
+            $em->remove($planeta);
+            $em->flush();
+        } 
+        catch (Exception $ex) 
+        {
+            $success = false;
+        }
         
-        return $planeta;
+        return $success;
+        
     }
     
 }

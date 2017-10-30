@@ -1,0 +1,40 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+    
+    <div class="notif-container">
+        {% for error in form_errors(form) %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endfor %}
+        
+        
+    </div>
+    
+    {{ form_start(form) }}
+        {% block form %}
+
+        {% endblock %}
+        
+        <div class="form-group">
+            {{ form_row(form.submit, {'attr' : {'class': 'btn btn-block btn-success'} }) }}
+        </div>
+        
+        
+        
+    {{ form_end(form) }}
+    
+        <div class="row">
+            {% if delete_form is defined %}
+            <div class="col-md-6">
+                {{ form_start(delete_form) }}
+                    <input class="btn btn-block btn-danger" type="submit" value="Eliminar"/>
+                {{ form_end(delete_form) }}
+            </div>
+            {% endif %}
+            <div class="col-md-6">
+                 <a class="btn btn-block btn-info" href="{{ path(entity ~ '_index') }}">Tornar a la llista</a>
+            </div>
+        </div>
+{% endblock %}

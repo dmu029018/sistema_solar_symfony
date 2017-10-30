@@ -1,16 +1,33 @@
-{% extends 'layout.html.twig' %}
+{% extends 'form-template.html.twig' %}
 
-{% block title %}Nuevo planeta{% endblock %}
+{% set page_title = 'Insertar nou planeta' %}
+{% set entity = 'planeta' %}
 
-{% block body %}
-    <h1 class="text-center page-header">Crear nou Planeta</h1>
-
-    {{ form_start(form) }}
+{% block form %}
+    
         <div class="form-group">
-            {{ form_widget(form) }}
+            {{ form_label(form.nom) }}
+            {{ form_widget(form.nom) }}
         </div>
-    {{ form_end(form) }}
-    
-    <a class="btn btn-block btn-info" href="{{ path('planeta_index') }}">Tornar a la llista</a>
-    
+        <div class="form-group">
+            {{ form_label(form.distancia) }}
+            {{ form_widget(form.distancia) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.periode) }}
+            {{ form_widget(form.periode) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.diametre) }}
+            {{ form_widget(form.diametre) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.situacio) }}
+            {{ form_widget(form.situacio) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.tipus) }}
+            {{ form_widget(form.tipus) }}
+        </div>
+
 {% endblock %}

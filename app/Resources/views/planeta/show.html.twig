@@ -1,14 +1,10 @@
 {% extends 'layout.html.twig' %}
 
-
-
-{% block title %}Planeta: {{ planeta.nom }}{% endblock %}
-
+{% set page_title = 'Planeta #' ~ planeta.id ~ ': ' ~ planeta.nom %}
 
 {% block body %}
     <div class="row">
         <div class="well">
-            <h1 class="text-center page-header">Planeta #{{planeta.id}}: {{planeta.nom}}</h1>
 
             <dl class="dl-horizontal text-center">
                 <dt>Distància</dt>

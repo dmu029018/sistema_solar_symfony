@@ -1,27 +1,31 @@
-{% extends 'layout.html.twig' %}
+{% extends 'form-template.html.twig' %}
 
-{% block title %}Editar planeta: {{ planeta.nom }}{% endblock %}
+{% set page_title = 'Editar planeta: ' ~ planeta.nom %}
+{% set entity = 'planeta' %}
+{% set form = edit_form %}
 
-
-{% block body %}
+{% block form %}
     <div class="well">
-        <h1 class="page-header text-center">Editar planeta: {{ planeta.nom }}</h1>
-
-        {{ form_start(edit_form) }}
         <div class="form-group">
-            {{ form_widget(edit_form) }}
+            {{ form_label(form.distancia) }}
+            {{ form_widget(form.distancia) }}
         </div>
-        {{ form_end(edit_form) }}
+        <div class="form-group">
+            {{ form_label(form.periode) }}
+            {{ form_widget(form.periode) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.diametre) }}
+            {{ form_widget(form.diametre) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.situacio) }}
+            {{ form_widget(form.situacio) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.tipus) }}
+            {{ form_widget(form.tipus) }}
+        </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <a class="btn btn-block btn-info" href="{{ path('planeta_index') }}">Tornar a la llista</a>
-        </div>
-        <div class="col-md-6">
-            {{ form_start(delete_form) }}
-            <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
-        </div>
-    </div>
 {% endblock %}

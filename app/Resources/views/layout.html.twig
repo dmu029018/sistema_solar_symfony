@@ -1,7 +1,7 @@
 <html lang={% block language %}CA-ca{% endblock %}>
     <head>
         <meta charset="UTF-8"/>
-        <title>{% block title %}Título de la página{% endblock %}</title>
+        <title>{% block title %}{{page_title}}{% endblock %}</title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         {% block stylesheets %}
             
@@ -63,7 +63,9 @@
         
         
         <div class="container" id="main-container">
+            <h1 class="page-header text-center">{{page_title | default('Títol de la pàgina')}}</h1>
             {% block body %}
+                Aquí va el contingut de la pàgina
             {% endblock %}
         </div>
         
