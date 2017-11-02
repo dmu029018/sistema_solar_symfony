@@ -1,0 +1,77 @@
+-Definir acciones de pdf y correo para planeta y satélite.
+Basarse en el ejemplo siguiente
+
+
+/**
+   * @Route("/pdf/{nomPlaneta}", name = "planeta11")
+   */
+  public function crearPDFAction($nomPlaneta) {
+    // recuperar dades de la DB
+    $repositori = $this->getDoctrine()->getRepository(Planeta::class);
+    $miPlaneta = $repositori->findOneByNom($nomPlaneta);
+    
+    // contingut HTML per afegir al PDF
+    $html = $this->renderView(
+      "planeta.html.twig",
+      [
+        'titol' => 'Dades del planeta '.$nomPlaneta,
+        'operacio' => 'sel-all',
+        'planetes' => [ $miPlaneta ]
+      ]
+      );
+    
+//    return new PdfResponse(
+//        $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+//        "$nomPlaneta.pdf"
+//      );
+    
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html),
+            200,
+            [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => "inline; filename=\"$nomPlaneta.pdf\""
+            ]
+        );    
+    
+  }
+  
+  /**
+   * @Route("/correu/{nomPlaneta}", name = "planeta12")
+   */
+  public function enviarCorreuAction($nomPlaneta, \Swift_Mailer $mailer) {
+    // https://symfony.com/doc/current/email.html
+    // https://symfony.com/doc/current/email/gmail.html
+    // https://stackoverflow.com/questions/40378067/symfony-swiftmailer-via-smtp-gmail-on-localhost-openssl-error
+    $repositori = $this->getDoctrine()->getRepository(Planeta::class);
+    $miPlaneta = $repositori->findOneByNom($nomPlaneta);
+    if (!$miPlaneta) {
+      throw $this->createNotFoundException("No existeix el planeta $nomPlaneta");
+    }
+    
+    $mailBody = $this->renderView(
+      "correu.html.twig",
+      [
+        'titol' => "Aquí tens les dades que vas demanar del planeta $nomPlaneta",
+        'planeta' => $miPlaneta
+      ]
+      );
+    
+    $correo = new \Swift_Message("Dades del planeta $nomPlaneta");
+    $correo->setFrom("victus.symfony@gmail.com");
+    $correo->setTo("Beciong1927@einrot.com");
+    $correo->setBody($mailBody);
+    
+    $mailer->send($correo);
+    
+    return $this->render(
+      "planeta.html.twig",
+      [
+        'titol' => 'Correu enviat amb les dades',
+        'operacio' => 'sel-all',
+        'planetes' => [ $miPlaneta ]
+      ]
+      );
+    
+  }
+  
