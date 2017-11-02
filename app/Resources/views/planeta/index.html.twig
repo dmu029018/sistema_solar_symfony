@@ -14,7 +14,9 @@
                 <th>Situació</th>
                 <th>Tipus</th>
                 <th>Superfície</th>
+                {% if is_granted('ROLE_ADMIN') %}
                 <th>Accions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -28,6 +30,7 @@
                 <td>{{ planetum.situacio }}</td>
                 <td>{{ planetum.tipus }}</td>
                 <td>{{ planetum.superficie }}</td>
+                {% if is_granted('ROLE_ADMIN') %}
                 <td>
                     <ul>
                         <li>
@@ -38,12 +41,15 @@
                         </li>
                     </ul>
                 </td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <div class="button-group">
-        <a class="btn btn-success" href="{{ path('planeta_new') }}">Crea un nou planeta</a>
+        {% if is_granted('ROLE_USER') %}
+            <a class="btn btn-success" href="{{ path('planeta_new') }}">Crea un nou planeta</a>
+        {% endif %}
     </div>
 {% endblock %}

@@ -1,13 +1,21 @@
 <html lang={% block language %}CA-ca{% endblock %}>
     <head>
         <meta charset="UTF-8"/>
-        <title>{% block title %}{{page_title}}{% endblock %}</title>
+        <title>
+            Sistema Solar
+            {% block title %}
+                {% if page_title is defined %}
+                    - {{page_title}}
+                    {% else %}
+                {% endif %}
+            {% endblock %}
+        </title>
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         {% block stylesheets %}
-            
+
             <link rel="stylesheet" type="text/css" href="{{asset("css/style-main.css")}}"/>
             <style>
-                
+
             </style>
         {% endblock %}
     </head>
@@ -24,35 +32,59 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('satelit_index')}}">Satèl·lits</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuari
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            {% if app.user %}
+                                <li><a href="{{ logout_path()}}">Tanca sessió</a></li>
+                            
+                            {% else %}
+                                <li><a href="{{ path('login')}}" id="menu-login">Inicia sessió</a></li>
+                                <li><a href="{{ path('register') }}" id="menu-register">Registrar-se</a></li>
+                            
+                            {% endif %}
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </nav>
-        
+
+        {% if not app.user %}
+            {# 
+            Si un usuari és loguejat, aquest bloc no es carrega.
+            És la "finestra emergent" que conté el formulari d'iniciar sessió
+            #}
+            <div class="emergent" id="login-form">
+                <!-- Formulario de login -->
+            </div>
+        {% endif %}
+
         {% for message in app.flashes('success') %}
             <div class="alert alert-success">
                 {{ message }}
             </div>
         {% endfor %}
-        
+
         {% for message in app.flashes('notice') %}
             <div class="alert alert-info">
                 {{ message }}
             </div>
         {% endfor %}
-        
+
         {% for message in app.flashes('warning') %}
             <div class="alert alert-warning">
                 {{ message }}
             </div>
         {% endfor %}
-        
+
         {% for message in app.flashes('error') %}
             <div class="alert alert-danger">
                 {{ message }}
             </div>
         {% endfor %}
-                    
-                    
+
+
         {% if errors is defined %}
             {% for error in errors %}
                 <div class="alert alert-danger">
@@ -60,22 +92,26 @@
                 </div>
             {% endfor %}
         {% endif %}
-        
-        
+
+
         <div class="container" id="main-container">
-            <h1 class="page-header text-center">{{page_title | default('Títol de la pàgina')}}</h1>
+            {% if page_title is defined %}
+                <h1 class="page-header text-center">{{page_title | default('Títol de la pàgina')}}</h1>
+            {% endif %}
+
             {% block body %}
                 Aquí va el contingut de la pàgina
             {% endblock %}
         </div>
-        
+
         {% block javascript %}
             <script
-			  src="https://code.jquery.com/jquery-3.2.1.min.js"
-			  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-			  crossorigin="anonymous"></script>
+                src="https://code.jquery.com/jquery-3.2.1.min.js"
+                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
             <script src="{{ asset('js/script.js') }}"></script>
         {% endblock %}
-        
+
     </body>
 </html>

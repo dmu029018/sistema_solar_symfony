@@ -18,7 +18,7 @@
                 <dt>Tipus</dt>
                 <dd>{{ planeta.tipus }}</dd>
                 <dt>Superfície</dt>
-                <dd>{{ planeta.superficie }}</dd>
+                <dd>{{ planeta.superficie }} M km<sup>2</sup></dd>
                 <dt>Satèl·lits</dt>
                 {% for satelit in satelits %}{#TODO: los satélites deben ser obtenibles mediante la entidad#}
                     <dd><a href="{{ path('satelit_show', {'id': satelit.id}) }}">{{ satelit.nom }}</dd>
@@ -34,12 +34,20 @@
             <a class="btn btn-block btn-info" href="{{ path('planeta_index') }}">Tornar a la llista</a>
         </div>
         <div class="col-md-4">
-            <a class="btn btn-block btn-warning" href="{{ path('planeta_edit', { 'id': planeta.id }) }}">Editar</a>
+            {% if is_granted('ROLE_ADMIN') %}
+
+
+                <a class="btn btn-block btn-warning" href="{{ path('planeta_edit', { 'id': planeta.id }) }}">Editar</a>
+            {% endif %}
         </div>
         <div class="col-md-4">
-            {{ form_start(delete_form) }}
-            <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
+
+            {% if is_granted('ROLE_ADMIN') %}
+                {{ form_start(delete_form) }}
+                <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
+                {{ form_end(delete_form) }}
+            {% endif %}
+            
         </div>
     </div>
 

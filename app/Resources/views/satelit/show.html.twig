@@ -14,12 +14,18 @@
             <a class="btn btn-block btn-info" href="{{ path('satelit_index') }}">Tornar a la llista</a>
         </div>
         <div class="col-md-4">
+            {% if is_granted('ROLE_ADMIN') %}
             <a class="btn btn-block btn-warning" href="{{ path('satelit_edit', { 'id': satelit.id }) }}">Editar</a>
+            {% endif %}
         </div>
-        <div class="col-md-4">
-            {{ form_start(delete_form) }}
-                <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
-            {{ form_end(delete_form) }}
-        </div>
+        
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="col-md-4">
+                {{ form_start(delete_form) }}
+                    <input class="btn btn-block btn-danger" type="submit" value="Eliminar">
+                {{ form_end(delete_form) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
