@@ -27,21 +27,25 @@
                 </div>
                 <ul class="nav navbar-nav mr-auto navbar-right">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('planeta_index')}}">Planetes</a>
+                        <a class="nav-link" href="{{ path('planeta_index')}}"><span class="glyphicon glyphicon-globe"></span> Planetes</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('satelit_index')}}">Satèl·lits</a>
+                        <a class="nav-link" href="{{ path('satelit_index')}}"><span class="glyphicon glyphicon-asterisk"></span> Satèl·lits</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Usuari
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            {%if app.user%}
+                                <span class="glyphicon glyphicon-user"></span>
+                            {%endif%}
+                            Usuari
                             <span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             {% if app.user %}
-                                <li><a href="{{ logout_path()}}">Tanca sessió</a></li>
+                                <li><a href="{{ logout_path()}}"><span class="glyphicon glyphicon-log-out"></span> Tanca sessió</a></li>
                             
                             {% else %}
-                                <li><a href="{{ path('login')}}" id="menu-login">Inicia sessió</a></li>
-                                <li><a href="{{ path('register') }}" id="menu-register">Registrar-se</a></li>
+                                <li><a href="{{ path('login')}}" id="menu-login"><span class="glyphicon glyphicon-log-in"></span> Inicia sessió</a></li>
+                                <li><a href="{{ path('register') }}" id="menu-register"><span class="glyphicon glyphicon-list-alt"></span> Registrar-se</a></li>
                             
                             {% endif %}
                         </ul>
