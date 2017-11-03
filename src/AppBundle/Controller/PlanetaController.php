@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
@@ -197,7 +198,7 @@ class PlanetaController extends Controller
     }
     
     /**
-     * PROVISIONAL
+     * NO FUNCIONA BIEN
      * 
      * Create a pdf file for a planet.
      * 
@@ -206,15 +207,24 @@ class PlanetaController extends Controller
      * @Method({"GET", "POST"})
      */
     public function toPdfAction(Planeta $planeta) {
+        
         if($planeta === null) 
         {
             $this->addFlash('error', "No s'ha trobat el planeta...");
             $this->redirectToRoute("planeta_index", 404);
         }
-
-        $deleteForm = $this->createDeleteForm($planeta);
-
+        
         $satelits = $this->getDoctrine()->getRepository('AppBundle:Planeta')->getAllSatelitsForAPlanet($planeta->getId());
+        
+        $html = $this->renderView("planeta/show.html.twig", [
+            'planeta' => $planeta,
+            'satelits' => $satelits,
+        ]);
+        
+        return new Response($this->get('knp_snappy.pdf')->getOutputFromHtml($html), 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="planeta-' . $planeta->getNom() . '.pdf"',
+        ]);
         //TODO: Que funcione
         /*
         return new PdfResponse($this->get('knp_snappy.pdf')
@@ -222,11 +232,5 @@ class PlanetaController extends Controller
                 
                 );
         */
-        return $this->render('planeta/show.html.twig', [
-            'planeta' => $planeta,
-            'satelits' => $satelits,
-            'delete_form' => $deleteForm->createView(),
-        ]);
-         
     }
 }
