@@ -5,12 +5,82 @@
 
 
 {% block form %}
-    <div class="form-group">
-        {{ form_label(form.nom) }}
-        {{ form_widget(form.nom) }}
+    <fieldset>
+        <legend class="text-center">Dades satèl·lit</legend>
+        <div class="form-group">
+            {{ form_label(form.nom) }}
+            {{ form_widget(form.nom) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.idPlaneta) }}
+            {{ form_widget(form.idPlaneta) }}
+        </div
+    </fieldset>
+    <div id="planeta-embedded-if">
+        <button type="button" class="btn btn-secondary dropdown-toggle btn-block" id="dropdownPlanetaEmbeddedBtn" data-toggle="collapse" data-target="#dropdownPlanetaEmbedded" aria-controls="collapse" aria-expanded="false">...o insereix un nou planeta per a aquest satèl·lit</button>
+
+        <div class="collapse" id="dropdownPlanetaEmbedded">
+            <div class="well">
+                <fieldset>
+                    <legend class="text-center">Nou planeta</legend>
+                    <div class="form-group">
+                        {{ form_label(form.embeddedPlaneta.nom) }}
+                        {{ form_widget(form.embeddedPlaneta.nom) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.embeddedPlaneta.distancia) }}
+                        {{ form_widget(form.embeddedPlaneta.distancia) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.embeddedPlaneta.periode) }}
+                        {{ form_widget(form.embeddedPlaneta.periode) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.embeddedPlaneta.diametre) }}
+                        {{ form_widget(form.embeddedPlaneta.diametre) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.embeddedPlaneta.situacio) }}
+                        {{ form_widget(form.embeddedPlaneta.situacio) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.embeddedPlaneta.tipus) }}
+                        {{ form_widget(form.embeddedPlaneta.tipus) }}
+                    </div>
+                </fieldset>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        {{ form_label(form.idPlaneta) }}
-        {{ form_widget(form.idPlaneta) }}
-    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function()
+        {
+
+            let planeta_embedded_interface = $("#planeta-embedded-if");
+            let planeta_selector = $("#appbundle_satelit_idPlaneta");
+            let isPlanetSelected = false;
+
+            let planetaEmbeddedHandle = function () {
+                let val = planeta_selector.val();
+
+                if (val && !isPlanetSelected)
+                {
+                    planeta_embedded_interface.fadeOut();
+                    isPlanetSelected = true;
+                } 
+                else
+                {
+                    planeta_embedded_interface.fadeIn();
+                    isPlanetSelected = false;
+                }
+            };
+
+            planeta_selector.on('change', planetaEmbeddedHandle);
+            
+            planetaEmbeddedHandle();
+        });
+    </script>    
 {% endblock %}

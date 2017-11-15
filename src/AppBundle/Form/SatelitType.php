@@ -2,10 +2,11 @@
 
 namespace AppBundle\Form;
 
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use AppBundle\Form\PlanetaEmbeddedType;
 
 
 class SatelitType extends CosmicBodyType
@@ -22,9 +23,14 @@ class SatelitType extends CosmicBodyType
                     'label' => 'Planeta',
                     'attr' => [
                         'class' => 'form-control'
-                    ]
+                    ],
+                    'placeholder' => 'Selecciona un planeta',
+                    'required' => false
                 ]);
         
+        $builder->add('embeddedPlaneta', PlanetaEmbeddedType::class, [
+            'required' => false
+        ]);
         
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'addDifferentFields']);
         

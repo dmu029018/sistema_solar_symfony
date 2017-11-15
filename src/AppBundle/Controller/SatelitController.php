@@ -42,23 +42,54 @@ class SatelitController extends Controller
         $satelit = new Satelit();
         $em = $this->getDoctrine()->getManager();
      
-        $planetes = $this->getDoctrine()->getManager()->getRepository('AppBundle:Planeta')->findAll();
-        
         $form = $this->createForm('AppBundle\Form\SatelitType', $satelit);
         
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) 
+        {
+            $data = $form->getData();
+          
+            $validator = $this->get('validator');
+            
             try
             {
-            $this->getDoctrine()->getManager()->getRepository('AppBundle:Satelit')->insert($satelit);
-            $this->addFlash('success', "Satèl·lit afegit amb èxit: {$satelit->getNom()}");
+                if($data->getIdPlaneta() === null) 
+                {
+                    $planetarepo = $em->getRepository('AppBundle:Planeta');
+                    $planeta = $data->getEmbeddedPlaneta();
+                    
+                    $errors = $validator->validate($planeta);
+                    
+                    if(!count($errors))
+                    {
+                        $planetarepo->insert($planeta);
+                        $data->setIdPlaneta($planetarepo->findOneByNom($planeta->getNom()));
+                        
+                        $this->addFlash('success', "Nou planeta afegit amb èxit: {$planeta->getNom()}");
+                    }
+                    else
+                    {
+                        foreach($errors as $error)
+                        {
+                            $this->addFlash('error', $error->getMessage());
+                        }
+                        
+                        return $this->render('satelit/new.html.twig', array(
+                            'satelit' => $satelit,
+                            'form' => $form->createView(),
+                        ));
+                    }
+                }
+                
+                $em->getRepository('AppBundle:Satelit')->insert($data);
+                $this->addFlash('success', "Satèl·lit afegit amb èxit: {$data->getNom()}");
+                
             }catch(UnE $ex)
             {
                 $this->addFlash('error', "Error al inserir el satèl·lit {$satelit->getNom()}: ja existeix un satèl·lit amb aquest nom");
                     return $this->redirectToRoute('satelit_index');
             }
-            
             return $this->redirectToRoute('satelit_show', [
                 'id' => $satelit->getId(),
             ]);

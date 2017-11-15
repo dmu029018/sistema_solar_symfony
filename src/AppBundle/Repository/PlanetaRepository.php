@@ -43,7 +43,7 @@ class PlanetaRepository extends EntityRepository
     /**
      * Inserta un planeta a la base de dades.
      * @param Planeta $planeta
-     * @return boolean True si la inserció del planeta s'ha realitzat amb èxit
+     * @return boolean
      */
     public function insert(Planeta $planeta)
     {
